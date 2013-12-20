@@ -12,7 +12,16 @@ describe('uiDate', function() {
       inject(function($compile, $rootScope) {
         var element;
         element = $compile("<input ui-date/>")($rootScope);
-        expect(element.datepicker()).toBeDefined();
+        $rootScope.$digest();
+        expect(element.hasClass("hasDatepicker")).toBeTruthy();
+      });
+    });
+    it('should not attach datepicker for element with readonly attribute', function() {
+      inject(function($compile, $rootScope) {
+        var element;
+        element = $compile("<input readonly=\"true\" ui-date/>")($rootScope);
+        $rootScope.$digest();
+        expect(element.hasClass("hasDatepicker")).toBeFalsy();
       });
     });
     it('should be able to get the date from the model', function() {

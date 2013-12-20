@@ -21,6 +21,9 @@ angular.module('ui.date', [])
       var getOptions = function () {
         return angular.extend({}, uiDateConfig, scope.$eval(attrs.uiDate));
       };
+      var isReadOnly = function () {
+        return !!element.prop("readonly");
+      };
       var initDateWidget = function () {
         var showing = false;
         var opts = getOptions();
@@ -65,15 +68,21 @@ angular.module('ui.date', [])
         }
         // If we don't destroy the old one it doesn't update properly when the config changes
         element.datepicker('destroy');
+
         // Create the new datepicker widget
-        element.datepicker(opts);
+        if ( !isReadOnly() ) {
+          element.datepicker(opts);
+        }
+
         if ( controller ) {
           // Force a render to override whatever is in the input text box
           controller.$render();
         }
       };
       // Watch for changes to the directives options
-      scope.$watch(getOptions, initDateWidget, true);
+      scope.$watch(function() {
+        return angular.extend({}, getOptions(), { readonly: isReadOnly() });
+      }, initDateWidget, true);
     }
   };
 }
